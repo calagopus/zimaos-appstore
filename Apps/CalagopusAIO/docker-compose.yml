@@ -1,15 +1,18 @@
-name: calagopus
+name: calagopus-aio
 
 services:
   web:
-    image: ghcr.io/calagopus/panel:1.2.4
+    image: ghcr.io/calagopus/panel:1.2.4-aio
     restart: unless-stopped
+    stop_grace_period: 1m
     environment:
       - TZ=$TZ
       - REDIS_URL=redis://cache
       - DATABASE_URL=postgresql://panel:panel@db/panel
       - DATABASE_MIGRATE=true
       - PORT=8000
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AIO_BASE_WINGS_CONFIGURATION=/etc/calagopus-aio/wings-config.yml
       - APP_DEBUG=false
       - APP_LOG_DIRECTORY=/var/log/calagopus
       - APP_PRIMARY=true
@@ -21,9 +24,22 @@ services:
       - target: 8000
         published: ${WEBUI_PORT:-8000}
         protocol: tcp
+      - target: 2022
+        published: "2022"
+        protocol: tcp
     volumes:
+      # --- panel
       - /DATA/AppData/$AppID/data:/var/lib/calagopus
       - /DATA/AppData/$AppID/logs:/var/log/calagopus
+
+      # --- wings
+      # A directory rather than a single file, so Docker can't create the file path as a directory.
+      - /DATA/AppData/$AppID/wings-base:/etc/calagopus-aio
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /DATA/AppData/$AppID/wings-etc:/etc/calagopus-wings
+      - /DATA/AppData/$AppID/wings-logs:/var/log/calagopus-wings
+      # Server files, backups, diffs and staging. Wings translates these paths to the host itself.
+      - /DATA/AppData/$AppID/wings:/var/lib/calagopus-wings
     depends_on:
       db:
         condition: service_healthy
@@ -52,10 +68,28 @@ services:
         - container: /var/log/calagopus
           description:
             en_US: Panel logs.
+        - container: /etc/calagopus-aio
+          description:
+            en_US: Base configuration for the integrated Wings node (wings-config.yml).
+        - container: /var/run/docker.sock
+          description:
+            en_US: Docker socket, used by the integrated Wings node to run game servers.
+        - container: /etc/calagopus-wings
+          description:
+            en_US: Integrated Wings node configuration.
+        - container: /var/log/calagopus-wings
+          description:
+            en_US: Integrated Wings node logs.
+        - container: /var/lib/calagopus-wings
+          description:
+            en_US: Game server files, backups and file history.
       ports:
         - container: "8000"
           description:
             en_US: Web UI port.
+        - container: "2022"
+          description:
+            en_US: SFTP port of the integrated Wings node.
 
   db:
     image: ghcr.io/calagopus/pgautoupgrade:18-alpine
@@ -95,7 +129,7 @@ x-casaos:
   architectures:
     - amd64
     - arm64
-  id: com.calagopus.panel
+  id: com.calagopus.panel.aio
   main: web
   version: "1.2.4"
   update_at: "2026-10-04"
@@ -112,12 +146,12 @@ x-casaos:
   repo: https://github.com/calagopus/panel
   docs: https://calagopus.com/docs
   support: https://github.com/calagopus/panel/issues
-  icon: https://cdn.jsdelivr.net/gh/calagopus/zimaos-appstore@main/Apps/Calagopus/icon.svg
+  icon: https://cdn.jsdelivr.net/gh/calagopus/zimaos-appstore@main/Apps/CalagopusAIO/icon.svg
   thumbnail: ""
   title:
-    en_US: Calagopus
+    en_US: Calagopus AIO
   tagline:
-    en_US: Modern game server management panel built in Rust
+    en_US: Game server panel with a built-in Wings node, ready to run servers
   description:
     en_US: |
       Calagopus is a modern, open-source game server management panel built with Rust and React. Deploy, monitor, and manage Minecraft, Hytale, and other game servers with industry-leading performance.
@@ -128,10 +162,12 @@ x-casaos:
       - **Calagopus AIO**: the panel plus an integrated Wings node, so you can create and run game servers on this device right away. The best choice for most people.
       - **Calagopus Heavy AIO**: everything in AIO, plus the toolchain to compile backend extensions on the device. Only pick this if you need backend extensions.
 
-      You are viewing: **Calagopus**.
+      You are viewing: **Calagopus AIO**.
   tips:
     before_install:
       en_US: |
         Before the first start, set `APP_ENCRYPTION_KEY` to a long, random value (e.g. the output of `openssl rand -hex 32`).
 
         Do **not** change it after installation, existing encrypted data will become unreadable.
+
+        This app needs access to the Docker socket to run game servers, and uses port `2022` for SFTP. Install only one Calagopus AIO variant at a time.
