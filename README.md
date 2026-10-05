@@ -9,5 +9,5 @@ Third-party app store for [ZimaOS](https://www.zimaspace.com/zimaos) and [CasaOS
 In ZimaOS, open the App Store, choose **Add source**, and enter:
 
 ```
-https://cdn.jsdelivr.net/gh/calagopus/zimaos-appstore@gh-pages
+https://calagopus.github.io/zimaos-appstore
 ```

@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  BASE_URL: https://cdn.jsdelivr.net/gh/${{ github.repository }}@gh-pages
+  BASE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
 
 jobs:
   build:
@@ -47,12 +47,3 @@ jobs:
           publish_dir: ./dist
           force_orphan: true
 
-      # jsDelivr caches branch files for up to 12 hours; purge the entrypoints clients poll.
-      - name: Purge jsDelivr cache
-        if: github.event_name != 'pull_request'
-        run: |
-          cd dist
-          for f in store.json index.json metadata.tar.gz metadata.sha256 $(find apps -type f); do
-            curl -fsS -o /dev/null "https://purge.jsdelivr.net/gh/${{ github.repository }}@gh-pages/$f" \
-              || echo "::warning::Failed to purge $f"
-          done
