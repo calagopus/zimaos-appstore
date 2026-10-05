@@ -29,9 +29,9 @@ services:
       - APP_USE_INTERNAL_CACHE=true
       - APP_DISABLE_EXTENSION_MANAGEMENT=false
     ports:
-      - target: 8000
-        published: ${WEBUI_PORT:-8000}
-      - target: 2022
+      - target: "8000"
+        published: "8000"
+      - target: "2022"
         published: "2022"
     volumes:
       # --- panel
@@ -153,7 +153,7 @@ x-casaos:
       See https://github.com/calagopus/panel/releases/tag/release-1.2.4
   index: /
   scheme: http
-  port_map: ${WEBUI_PORT:-8000}
+  port_map: "8000"
   category: Developer
   author: Calagopus
   developer: Calagopus

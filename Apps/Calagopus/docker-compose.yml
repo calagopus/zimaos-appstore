@@ -25,8 +25,8 @@ services:
       - APP_USE_DECRYPTION_CACHE=true
       - APP_USE_INTERNAL_CACHE=true
     ports:
-      - target: 8000
-        published: ${WEBUI_PORT:-8000}
+      - target: "8000"
+        published: "8000"
     volumes:
       - /DATA/AppData/$AppID/data:/var/lib/calagopus
       - /DATA/AppData/$AppID/logs:/var/log/calagopus
@@ -100,7 +100,7 @@ x-casaos:
       See https://github.com/calagopus/panel/releases/tag/release-1.2.4
   index: /
   scheme: http
-  port_map: ${WEBUI_PORT:-8000}
+  port_map: "8000"
   category: Developer
   author: Calagopus
   developer: Calagopus
