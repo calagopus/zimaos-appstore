@@ -99,6 +99,9 @@ x-casaos:
   main: web
   version: "1.2.4"
   update_at: "2026-10-04"
+  release_notes:
+    en_US: |-
+      See https://github.com/calagopus/panel/releases/tag/release-1.2.4
   index: /
   scheme: http
   port_map: ${WEBUI_PORT:-8000}
