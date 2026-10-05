@@ -8,11 +8,9 @@ services:
       - /bin/sh
       - -c
       - |
-        if printenv APP_ENCRYPTION_KEY | grep -qxi -e '' -e changeme; then
-          [ -s /var/lib/calagopus/.encryption-key ] || (umask 077; head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n' > /var/lib/calagopus/.encryption-key)
-          export APP_ENCRYPTION_KEY="$(cat /var/lib/calagopus/.encryption-key)"
-        fi
-        exec /usr/bin/panel-rs "$@"
+        [ -s /var/lib/calagopus/.encryption-key ] || (umask 077; head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n' > /var/lib/calagopus/.encryption-key)
+        export APP_ENCRYPTION_KEY="$(cat /var/lib/calagopus/.encryption-key)"
+        exec /usr/bin/panel-rs "$$@"
       - panel-rs
     environment:
       - TZ=$TZ
