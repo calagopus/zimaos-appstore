@@ -4,6 +4,18 @@ services:
   web:
     image: ghcr.io/calagopus/panel:1.2.4-heavy-aio
     restart: unless-stopped
+    # Generates APP_ENCRYPTION_KEY on first start unless one is set. Written without $VAR references
+    # because CasaOS interpolates the compose file twice, which would consume $$ escapes.
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        if printenv APP_ENCRYPTION_KEY | grep -qxi -e '' -e changeme; then
+          [ -s /var/lib/calagopus/.encryption-key ] || (umask 077; head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n' > /var/lib/calagopus/.encryption-key)
+          export APP_ENCRYPTION_KEY="$(cat /var/lib/calagopus/.encryption-key)"
+        fi
+        exec /app/heavy-supervisor "$@"
+      - heavy-supervisor
     stop_grace_period: 1m
     environment:
       - TZ=$TZ
@@ -17,7 +29,7 @@ services:
       - APP_LOG_DIRECTORY=/var/log/calagopus
       - APP_PRIMARY=true
       - APP_ENABLE_WINGS_PROXY=true
-      - APP_ENCRYPTION_KEY=CHANGEME
+      - APP_ENCRYPTION_KEY=
       - APP_USE_DECRYPTION_CACHE=true
       - APP_USE_INTERNAL_CACHE=true
       - APP_DISABLE_EXTENSION_MANAGEMENT=false
@@ -58,7 +70,7 @@ services:
       envs:
         - container: APP_ENCRYPTION_KEY
           description:
-            en_US: Key used to encrypt sensitive data. Set a long, random value before first start and never change it afterwards.
+            en_US: Key used to encrypt sensitive data. Leave empty to generate one automatically on first start (stored in the panel data folder). Never change it after installation.
         - container: APP_ENABLE_WINGS_PROXY
           description:
             en_US: Proxy user requests to Wings nodes through the panel. Simplifies home network setups, not recommended for many nodes or high traffic.
@@ -188,9 +200,9 @@ x-casaos:
   tips:
     before_install:
       en_US: |
-        Before the first start, set `APP_ENCRYPTION_KEY` to a long, random value (e.g. the output of `openssl rand -hex 32`).
+        An encryption key is generated automatically on first start and stored in `/DATA/AppData/<app>/data/.encryption-key`. Back it up together with the database: without it, encrypted data cannot be recovered.
 
-        Do **not** change it after installation, existing encrypted data will become unreadable.
+        To use your own key instead, set `APP_ENCRYPTION_KEY` before the first start. Do **not** change it after installation.
 
         This app needs access to the Docker socket to run game servers, and uses port `2022` for SFTP. Install only one Calagopus AIO variant at a time.
 
