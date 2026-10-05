@@ -31,10 +31,8 @@ services:
     ports:
       - target: 8000
         published: ${WEBUI_PORT:-8000}
-        protocol: tcp
       - target: 2022
         published: "2022"
-        protocol: tcp
     volumes:
       # --- panel
       - /DATA/AppData/$AppID/data:/var/lib/calagopus
@@ -57,8 +55,6 @@ services:
         condition: service_healthy
       cache:
         condition: service_started
-    networks:
-      - calagopus
     x-casaos:
       envs:
         - container: APP_ENCRYPTION_KEY
@@ -134,8 +130,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-    networks:
-      - calagopus
 
   cache:
     image: ghcr.io/calagopus/valkey:latest
@@ -145,12 +139,6 @@ services:
       TZ: $TZ
     volumes:
       - /DATA/AppData/$AppID/cache:/data
-    networks:
-      - calagopus
-
-networks:
-  calagopus:
-    driver: bridge
 
 x-casaos:
   architectures:
