@@ -91,6 +91,8 @@ services:
         - container: "2022"
           description:
             en_US: SFTP port of the integrated Wings node.
+    networks:
+      - calagopus
 
   db:
     image: ghcr.io/calagopus/pgautoupgrade:18-alpine
@@ -108,6 +110,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    networks:
+      - calagopus
 
   cache:
     image: ghcr.io/calagopus/valkey:latest
@@ -117,6 +121,12 @@ services:
       TZ: $TZ
     volumes:
       - /DATA/AppData/$AppID/cache:/data
+    networks:
+      - calagopus
+
+networks:
+  calagopus:
+    driver: bridge
 
 x-casaos:
   architectures:

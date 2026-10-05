@@ -35,6 +35,8 @@ services:
         condition: service_healthy
       cache:
         condition: service_started
+    networks:
+      - calagopus
     x-casaos:
       envs:
         - container: APP_ENCRYPTION_KEY
@@ -77,6 +79,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    networks:
+      - calagopus
 
   cache:
     image: ghcr.io/calagopus/valkey:latest
@@ -86,6 +90,12 @@ services:
       TZ: $TZ
     volumes:
       - /DATA/AppData/$AppID/cache:/data
+    networks:
+      - calagopus
+
+networks:
+  calagopus:
+    driver: bridge
 
 x-casaos:
   architectures:
