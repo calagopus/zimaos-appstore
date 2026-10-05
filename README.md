@@ -2,4 +2,4 @@
 
 # Calagopus Umbrel Community Store
 
-Community store for [UmbrelOS](https://umbrel.com/umbrelos), for installation details visit [calagopus.com](https://calagopus.com/docs/panel/installation/external-methods/umbrelos).
+Third-party app store for [ZimaOS](https://www.zimaspace.com/zimaos) and [CasaOS](https://casaos.zimaspace.com/). for installation details visit [calagopus.com](https://calagopus.com/docs).

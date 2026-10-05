@@ -2,10 +2,10 @@ name: calagopus
 
 services:
   web:
-    image: ghcr.io/calagopus/panel:latest
+    image: ghcr.io/calagopus/panel:1.2.4
     restart: unless-stopped
     environment:
-      - TZ=Europe/Berlin
+      - TZ=$TZ
       - REDIS_URL=redis://cache
       - DATABASE_URL=postgresql://panel:panel@db/panel
       - DATABASE_MIGRATE=true
@@ -17,48 +17,79 @@ services:
       - APP_ENCRYPTION_KEY=CHANGEME
       - APP_USE_DECRYPTION_CACHE=true
       - APP_USE_INTERNAL_CACHE=true
+    ports:
+      - target: 8000
+        published: ${WEBUI_PORT:-8000}
+        protocol: tcp
     volumes:
       - /DATA/AppData/$AppID/data:/var/lib/calagopus
       - /DATA/AppData/$AppID/logs:/var/log/calagopus
     depends_on:
-      - db
-      - cache
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    networks:
+      - calagopus
     x-casaos:
+      envs:
+        - container: APP_ENCRYPTION_KEY
+          description:
+            en_US: Key used to encrypt sensitive data. Set a long, random value before first start and never change it afterwards.
+        - container: APP_ENABLE_WINGS_PROXY
+          description:
+            en_US: Proxy user requests to Wings nodes through the panel. Simplifies home network setups, not recommended for many nodes or high traffic.
+        - container: APP_USE_DECRYPTION_CACHE
+          description:
+            en_US: Cache decrypted values in memory and Redis to improve performance. Can be considered less secure.
+        - container: APP_USE_INTERNAL_CACHE
+          description:
+            en_US: Cache short-lived values in app memory as well as Redis. Improves performance at the cost of memory usage.
       volumes:
         - container: /var/lib/calagopus
           description:
-            en_US: 'Container Path: /var/lib/calagopus'
+            en_US: Panel data.
         - container: /var/log/calagopus
           description:
-            en_US: 'Container Path: /var/log/calagopus'
-        - container: /var/run/docker.sock
-          description:
-            en_US: 'Container Path: /var/run/docker.sock'
+            en_US: Panel logs.
       ports:
         - container: "8000"
           description:
-            en_US: 'Container Port: 8000'
+            en_US: Web UI port.
 
   db:
     image: ghcr.io/calagopus/pgautoupgrade:18-alpine
     restart: unless-stopped
     environment:
-      - TZ=Europe/Berlin
+      - TZ=$TZ
       - POSTGRES_USER=panel
       - POSTGRES_PASSWORD=panel
       - POSTGRES_DB=panel
       - PGDATA=/data
     volumes:
       - /DATA/AppData/$AppID/postgres:/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U panel -d panel"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - calagopus
 
   cache:
     image: ghcr.io/calagopus/valkey:latest
     restart: unless-stopped
     command: --protected-mode no --save 60 1
     environment:
-      TZ: Europe/Berlin
+      TZ: $TZ
     volumes:
       - /DATA/AppData/$AppID/cache:/data
+    networks:
+      - calagopus
+
+networks:
+  calagopus:
+    driver: bridge
 
 x-casaos:
   architectures:
@@ -66,15 +97,29 @@ x-casaos:
     - arm64
   id: com.calagopus.panel
   main: web
-  description:
-    en_US: A modern game server management panel built in Rust. Deploy, monitor, and manage Minecraft, Hytale, and other game servers with industry-leading performance.
-  tagline:
-    en_US: Calagopus
-  developer: Calagopus
+  version: "1.2.4"
+  update_at: "2026-10-04"
+  index: /
+  scheme: http
+  port_map: ${WEBUI_PORT:-8000}
+  category: Others
   author: Calagopus
-  icon: https://calagopus.com/logos/icon.svg
+  developer: Calagopus
+  website: https://calagopus.com
+  repo: https://github.com/calagopus/panel
+  docs: https://calagopus.com/docs
+  support: https://github.com/calagopus/panel/issues
+  icon: https://cdn.jsdelivr.net/gh/calagopus/zimaos-appstore@main/Apps/Calagopus/icon.svg
   thumbnail: ""
   title:
     en_US: Calagopus
-  category: Others
-  port_map: "8000"
+  tagline:
+    en_US: Modern game server management panel built in Rust
+  description:
+    en_US: A modern game server management panel built in Rust. Deploy, monitor, and manage Minecraft, Hytale, and other game servers with industry-leading performance.
+  tips:
+    before_install:
+      en_US: |
+        Before the first start, set `APP_ENCRYPTION_KEY` to a long, random value (e.g. the output of `openssl rand -hex 32`).
+
+        Do **not** change it after installation, existing encrypted data will become unreadable.
