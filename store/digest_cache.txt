@@ -1,0 +1,5 @@
+ghcr.io/calagopus/panel:1.2.4 sha256:c3cea549892677df20193e3494724cbde1cfca3fcc771f72d0a59d2f90a3461e
+ghcr.io/calagopus/panel:1.2.4-aio sha256:41ed29633d48a3e31542276f04d4cba84eff1e1fc867743484d3a62687c4a926
+ghcr.io/calagopus/panel:1.2.4-heavy-aio sha256:1fcc6a2a017c705d45720f79a172dce0bfa908eb68fe3baaa8d604b9e6ef52b0
+ghcr.io/calagopus/pgautoupgrade:18-alpine sha256:21171b7f0e8abb2f3e59917cdb1853f7d847428f5394c3fda5f33f54fec13254
+ghcr.io/calagopus/valkey:latest sha256:4dfc846b990e91e18ef18920b87583051013999aca669a1dbefc44beada90b84

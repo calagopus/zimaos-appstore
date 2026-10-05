@@ -1,0 +1,71 @@
+{
+  "version": 2,
+  "updated_at": "2026-10-05T12:22:57Z",
+  "app_count": 3,
+  "base_url": "https://calagopus.github.io/zimaos-appstore",
+  "apps": [
+    {
+      "id": "com.calagopus.panel",
+      "title": "Calagopus",
+      "tagline": "Modern game server management panel built in Rust",
+      "category": "Developer",
+      "categories": [
+        "developer"
+      ],
+      "author": "Calagopus",
+      "developer": "Calagopus",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "icon": "/apps/com.calagopus.panel/assets/icon.svg",
+      "thumbnail": "",
+      "compose_url": "/apps/com.calagopus.panel/docker-compose.yml",
+      "meta_url": "/apps/com.calagopus.panel/meta.json",
+      "content_hash": "58b2cbc4",
+      "version": "1.2.4"
+    },
+    {
+      "id": "com.calagopus.panel.aio",
+      "title": "Calagopus AIO",
+      "tagline": "Game server panel with a built-in Wings node, ready to run servers",
+      "category": "Developer",
+      "categories": [
+        "developer"
+      ],
+      "author": "Calagopus",
+      "developer": "Calagopus",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "icon": "/apps/com.calagopus.panel.aio/assets/icon.svg",
+      "thumbnail": "",
+      "compose_url": "/apps/com.calagopus.panel.aio/docker-compose.yml",
+      "meta_url": "/apps/com.calagopus.panel.aio/meta.json",
+      "content_hash": "b6e7aa76",
+      "version": "1.2.4"
+    },
+    {
+      "id": "com.calagopus.panel.heavy-aio",
+      "title": "Calagopus Heavy AIO",
+      "tagline": "Game server panel with a built-in Wings node and extension toolchain",
+      "category": "Developer",
+      "categories": [
+        "developer"
+      ],
+      "author": "Calagopus",
+      "developer": "Calagopus",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "icon": "/apps/com.calagopus.panel.heavy-aio/assets/icon.svg",
+      "thumbnail": "",
+      "compose_url": "/apps/com.calagopus.panel.heavy-aio/docker-compose.yml",
+      "meta_url": "/apps/com.calagopus.panel.heavy-aio/meta.json",
+      "content_hash": "a372c0dd",
+      "version": "1.2.4"
+    }
+  ]
+}

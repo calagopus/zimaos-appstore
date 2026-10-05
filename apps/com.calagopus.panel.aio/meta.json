@@ -1,0 +1,33 @@
+{
+  "architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "update_at": "2026-10-04",
+  "category": "Developer",
+  "author": "Calagopus",
+  "developer": "Calagopus",
+  "website": "https://calagopus.com",
+  "repo": "https://github.com/calagopus/panel",
+  "docs": "https://calagopus.com/docs",
+  "support": "https://github.com/calagopus/panel/issues",
+  "thumbnail": "",
+  "tagline": "Game server panel with a built-in Wings node, ready to run servers",
+  "description": "Calagopus is a modern, open-source game server management panel built with Rust and React. Deploy, monitor, and manage Minecraft, Hytale, and other game servers with industry-leading performance.\n\nCalagopus comes in three variants:\n\n- **Calagopus**: just the panel. Connect one or more separate Wings nodes to run game servers.\n- **Calagopus AIO**: the panel plus an integrated Wings node, so you can create and run game servers on this device right away. The best choice for most people.\n- **Calagopus Heavy AIO**: everything in AIO, plus the toolchain to compile backend extensions on the device. Only pick this if you need backend extensions.\n\nYou are viewing: **Calagopus AIO**.\n",
+  "tips": {
+    "before_install": "An encryption key is generated automatically on first start and stored in `/DATA/AppData/<app>/data/.encryption-key`. Back it up together with the database: without it, encrypted data cannot be recovered.\n\nTo use your own key instead, set `APP_ENCRYPTION_KEY` before the first start. Do **not** change it after installation.\n\nThis app needs access to the Docker socket to run game servers, and uses port `2022` for SFTP. Install only one Calagopus AIO variant at a time.\n"
+  },
+  "title": "Calagopus AIO",
+  "release_note": "See https://github.com/calagopus/panel/releases/tag/release-1.2.4",
+  "base_url": "https://calagopus.github.io/zimaos-appstore",
+  "id": "com.calagopus.panel.aio",
+  "version": "1.2.4",
+  "categories": [
+    "developer"
+  ],
+  "min_memory": 0,
+  "min_image_size": {
+    "amd64": 288361386,
+    "arm64": 281615681
+  }
+}

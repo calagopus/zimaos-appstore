@@ -1,0 +1,104 @@
+name: calagopus-heavy-aio
+
+services:
+  web:
+    image: ghcr.io/calagopus/panel:1.2.4-heavy-aio
+    restart: unless-stopped
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        [ -s /var/lib/calagopus/.encryption-key ] || (umask 077; head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n' > /var/lib/calagopus/.encryption-key)
+        export APP_ENCRYPTION_KEY="$(cat /var/lib/calagopus/.encryption-key)"
+        exec /app/heavy-supervisor "$$@"
+      - heavy-supervisor
+    stop_grace_period: 1m
+    environment:
+      - TZ=$TZ
+      - REDIS_URL=redis://cache
+      - DATABASE_URL=postgresql://panel:panel@db/panel
+      - DATABASE_MIGRATE=true
+      - PORT=8000
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AIO_BASE_WINGS_CONFIGURATION=/etc/calagopus-aio/wings-config.yml
+      - APP_DEBUG=false
+      - APP_LOG_DIRECTORY=/var/log/calagopus
+      - APP_PRIMARY=true
+      - APP_ENABLE_WINGS_PROXY=true
+      - APP_USE_DECRYPTION_CACHE=true
+      - APP_USE_INTERNAL_CACHE=true
+      - APP_DISABLE_EXTENSION_MANAGEMENT=false
+    ports:
+      - target: "8000"
+        published: "8000"
+      - target: "2022"
+        published: "2022"
+    volumes:
+      # --- panel
+      - /DATA/AppData/$AppID/data:/var/lib/calagopus
+      - /DATA/AppData/$AppID/logs:/var/log/calagopus
+
+      # --- extensions
+      - /DATA/AppData/$AppID/build/binaries:/app/binaries
+      - /DATA/AppData/$AppID/build/translations:/app/translations
+      - /DATA/AppData/$AppID/build/extensions:/app/extensions
+      - /DATA/AppData/$AppID/build/extension-migrations:/app/repo/database/extension-migrations
+
+      # --- wings
+      - /DATA/AppData/$AppID/wings-base:/etc/calagopus-aio
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /DATA/AppData/$AppID/wings-etc:/etc/calagopus-wings
+      - /DATA/AppData/$AppID/wings-logs:/var/log/calagopus-wings
+      - /DATA/AppData/$AppID/wings:/var/lib/calagopus-wings
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    networks:
+      - calagopus
+
+  db:
+    image: ghcr.io/calagopus/pgautoupgrade:18-alpine
+    restart: unless-stopped
+    environment:
+      - TZ=$TZ
+      - POSTGRES_USER=panel
+      - POSTGRES_PASSWORD=panel
+      - POSTGRES_DB=panel
+      - PGDATA=/data
+    volumes:
+      - /DATA/AppData/$AppID/postgres:/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U panel -d panel"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - calagopus
+
+  cache:
+    image: ghcr.io/calagopus/valkey:latest
+    restart: unless-stopped
+    command: --protected-mode no --save 60 1
+    environment:
+      TZ: $TZ
+    volumes:
+      - /DATA/AppData/$AppID/cache:/data
+    networks:
+      - calagopus
+
+networks:
+  calagopus:
+    driver: bridge
+
+x-casaos:
+  id: com.calagopus.panel.heavy-aio
+  main: web
+  version: "1.2.4"
+  index: /
+  scheme: http
+  port_map: "8000"
+  icon: https://calagopus.github.io/zimaos-appstore/apps/com.calagopus.panel.heavy-aio/assets/icon.svg
+  title:
+    en_US: Calagopus Heavy AIO
