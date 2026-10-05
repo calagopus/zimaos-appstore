@@ -1,0 +1,58 @@
+name: Build and Publish Store
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-store-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  BASE_URL: https://cdn.jsdelivr.net/gh/${{ github.repository }}@gh-pages
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/cache@v6
+        with:
+          path: .cache/build_appstore
+          key: build-appstore-${{ github.run_id }}
+          restore-keys: build-appstore-
+
+      - name: Build v2 dist
+        uses: IceWhaleTech/build-appstore-action@v1
+        with:
+          source: .
+          output: dist
+          base-url: ${{ env.BASE_URL }}
+          cache-file: .cache/build_appstore/image-size-cache.json
+          digest-cache-file: .cache/build_appstore/image-digest-cache.json
+          report-json: .cache/build-report.json
+
+      - name: Deploy to gh-pages
+        if: github.event_name != 'pull_request'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./dist
+          force_orphan: true
+
+      # jsDelivr caches branch files for up to 12 hours; purge the entrypoints clients poll.
+      - name: Purge jsDelivr cache
+        if: github.event_name != 'pull_request'
+        run: |
+          cd dist
+          for f in store.json index.json metadata.tar.gz metadata.sha256 $(find apps -type f); do
+            curl -fsS -o /dev/null "https://purge.jsdelivr.net/gh/${{ github.repository }}@gh-pages/$f" \
+              || echo "::warning::Failed to purge $f"
+          done
