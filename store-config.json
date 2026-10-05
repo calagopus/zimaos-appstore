@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "store_id": "com.calagopus.zimaos",
+  "name": { "en_US": "Calagopus ZimaOS App Store" },
+  "description": { "en_US": "Calagopus application for ZimaOS." },
+  "maintainer": "Calagopus",
+  "url": "https://github.com/calagopus/zimaos-appstore"
+}

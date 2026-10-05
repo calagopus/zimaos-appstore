@@ -1,0 +1,80 @@
+name: calagopus
+
+services:
+  web:
+    image: ghcr.io/calagopus/panel:latest
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - REDIS_URL=redis://cache
+      - DATABASE_URL=postgresql://panel:panel@db/panel
+      - DATABASE_MIGRATE=true
+      - PORT=8000
+      - APP_DEBUG=false
+      - APP_LOG_DIRECTORY=/var/log/calagopus
+      - APP_PRIMARY=true
+      - APP_ENABLE_WINGS_PROXY=true
+      - APP_ENCRYPTION_KEY=CHANGEME
+      - APP_USE_DECRYPTION_CACHE=true
+      - APP_USE_INTERNAL_CACHE=true
+    volumes:
+      - /DATA/AppData/$AppID/data:/var/lib/calagopus
+      - /DATA/AppData/$AppID/logs:/var/log/calagopus
+    depends_on:
+      - db
+      - cache
+    x-casaos:
+      volumes:
+        - container: /var/lib/calagopus
+          description:
+            en_US: 'Container Path: /var/lib/calagopus'
+        - container: /var/log/calagopus
+          description:
+            en_US: 'Container Path: /var/log/calagopus'
+        - container: /var/run/docker.sock
+          description:
+            en_US: 'Container Path: /var/run/docker.sock'
+      ports:
+        - container: "8000"
+          description:
+            en_US: 'Container Port: 8000'
+
+  db:
+    image: ghcr.io/calagopus/pgautoupgrade:18-alpine
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - POSTGRES_USER=panel
+      - POSTGRES_PASSWORD=panel
+      - POSTGRES_DB=panel
+      - PGDATA=/data
+    volumes:
+      - /DATA/AppData/$AppID/postgres:/data
+
+  cache:
+    image: ghcr.io/calagopus/valkey:latest
+    restart: unless-stopped
+    command: --protected-mode no --save 60 1
+    environment:
+      TZ: Europe/Berlin
+    volumes:
+      - /DATA/AppData/$AppID/cache:/data
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  id: com.calagopus.panel
+  main: web
+  description:
+    en_US: A modern game server management panel built in Rust. Deploy, monitor, and manage Minecraft, Hytale, and other game servers with industry-leading performance.
+  tagline:
+    en_US: Calagopus
+  developer: Calagopus
+  author: Calagopus
+  icon: https://calagopus.com/logos/icon.svg
+  thumbnail: ""
+  title:
+    en_US: Calagopus
+  category: Others
+  port_map: "8000"
