@@ -2,7 +2,7 @@ name: calagopus-aio
 
 services:
   web:
-    image: ghcr.io/calagopus/panel:1.2.4-aio
+    image: ghcr.io/calagopus/panel:1.2.5-aio@sha256:e6cc0f40695ff678cd45bb27e11a12071d30a38b30b3958d31617db3c97048fc
     restart: unless-stopped
     entrypoint:
       - /bin/sh
@@ -134,11 +134,24 @@ x-casaos:
     - arm64
   id: com.calagopus.panel.aio
   main: web
-  version: "1.2.4"
-  update_at: "2026-10-04"
+  version: "1.2.5"
+  update_at: "2026-10-11"
   release_notes:
     en_US: |-
-      See https://github.com/calagopus/panel/releases/tag/release-1.2.4
+      Added:
+      - Added support for streaming unix sockets inside servers over a websocket
+      - Added support for server bandwidth limiting ( @Tomaxikz )
+      - Added language picker and auto-detection in auth screen
+      - Added support for setting a redis key prefix for the panel
+      - Added more customization options to egg configuration matching and functions
+      - Added support for fetching from multiple info urls for oauth mapping purposes
+
+      Fixed:
+      - Fixed some reliability issues with pterodactyl-compatible egg export
+      - Fixed unnecessary cargo workspace chaos causing longer backend rebuild times
+      - Fixed some minor bugs around postgres databases outside of db-agent
+      …
+      Full notes: https://github.com/calagopus/panel/releases/tag/release-1.2.5
   index: /
   scheme: http
   port_map: "8000"
