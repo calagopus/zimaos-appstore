@@ -2,7 +2,7 @@ name: calagopus-heavy-aio
 
 services:
   web:
-    image: ghcr.io/calagopus/panel:1.2.4-heavy-aio
+    image: ghcr.io/calagopus/panel:1.2.6-heavy-aio@sha256:60df6eb4b2d5f7a4021e3ca44af89c9e787e98f16d475e37ea5ed82fb5c3422c
     restart: unless-stopped
     entrypoint:
       - /bin/sh
@@ -156,11 +156,23 @@ x-casaos:
     - arm64
   id: com.calagopus.panel.heavy-aio
   main: web
-  version: "1.2.4"
-  update_at: "2026-10-04"
+  version: "1.2.6"
+  update_at: "2026-10-18"
   release_notes:
     en_US: |-
-      See https://github.com/calagopus/panel/releases/tag/release-1.2.4
+      Added:
+      - Added trash bin
+      - Added upload progress indication to extensions page
+      - Added indication of what extensions are causing build issues
+      - Added new egg library to simplify egg workflows
+      - Added setting for disabling avatar modification
+      - Added download button to 2fa codes modal
+
+      Fixed:
+      - Fixed mass-transfer-all servers not working properly on the frontend
+      - FIxed admin settings pages being an unorganized mess in some cases
+      - Fixed issues with imports from pterodactyl v2
+      - Fixed further UX issues with file ignore matching
   index: /
   scheme: http
   port_map: "8000"
