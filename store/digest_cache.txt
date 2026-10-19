@@ -1,0 +1,2 @@
+ghcr.io/calagopus/pgautoupgrade:18-alpine sha256:2044174df8f9b9b1fe9ef688dfb8b219190a9f4d79b0bd51e067d33a314bb064
+ghcr.io/calagopus/valkey:latest sha256:94c44c3dd0f7acbe4e9215c436db7d355b834daf8a378eb2ee4a843e46513996
