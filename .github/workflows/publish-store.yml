@@ -29,7 +29,7 @@ jobs:
           restore-keys: build-appstore-
 
       - name: Build v2 dist
-        uses: calagopus/zimaos-appstore-action@main
+        uses: calagopus/zimaos-appstore-action@b330deafb93d63e1bcabea9bd52c8af18ab7db1a
         with:
           source: .
           output: dist
