@@ -2,7 +2,7 @@ name: calagopus
 
 services:
   web:
-    image: ghcr.io/calagopus/panel:1.2.7@sha256:636fef779bc98714fde7e4900b94bcf7b9d46f7bf7bdc49304a728d13ba47d49
+    image: ghcr.io/calagopus/panel:1.2.8@sha256:2062e9433d9252d3903a76294e3ec2a69cd04bb0b1451361f70d26c98ed4e05b
     restart: unless-stopped
     entrypoint:
       - /bin/sh
@@ -103,27 +103,25 @@ x-casaos:
     - arm64
   id: com.calagopus.panel
   main: web
-  version: "1.2.7"
-  update_at: "2026-10-25"
+  version: "1.2.8"
+  update_at: "2026-11-02"
   release_notes:
     en_US: |-
       Added:
-      - Added support for new self-upgrade flow
-      - Added copy logs button to build logs modal
-      - Added heart status icon to regular database hosts
-      - Added database size overview to regular database hosts
-      - Added allocation breakdown to node/db-agent hosts
-      - Added explicit handling for extension startups
-      - Added ability to resize sidebar in file manager tree mode
-      - Added ability to use advanced search in file manager tree mode
-      - Added extension build failed alert to admin homepage
-      - Added backup locking/unlocking directly to backup context menu
-      - Added ability to choose page sizes in paginations
-      - Added icon picking support to oauth providers and custom sidebar routes
+      - Added new msgpack websocket transmission mode for more efficient binary communication
+      - Added support for customizing console/editor font size via keyboard shortcuts
+      - Added admin controls for mass-retrying failed-deletion backups
+      - Added explicit oauth API linkability option to oauth providers
+      - Added children counts to many admin tables
+      - Added support for weekly cronjobs in schedules
+      - Added ability to hide oauth providers from login
 
       Fixed:
+      - Fixed some bugs in the file manager tree view pane system
+      - FIxed MacOS issues related to xterm copying
+      - Fixed Announcements being able to murder mobile UX
       …
-      Full notes: https://github.com/calagopus/panel/releases/tag/release-1.2.7
+      Full notes: https://github.com/calagopus/panel/releases/tag/release-1.2.8
   index: /
   scheme: http
   port_map: "8000"
