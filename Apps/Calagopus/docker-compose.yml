@@ -2,7 +2,7 @@ name: calagopus
 
 services:
   web:
-    image: ghcr.io/calagopus/panel:1.2.8@sha256:2062e9433d9252d3903a76294e3ec2a69cd04bb0b1451361f70d26c98ed4e05b
+    image: ghcr.io/calagopus/panel:1.2.9@sha256:62a2cec11718a686351397567aa483855748557dce1713a9182aa4454e775cd0
     restart: unless-stopped
     entrypoint:
       - /bin/sh
@@ -103,25 +103,23 @@ x-casaos:
     - arm64
   id: com.calagopus.panel
   main: web
-  version: "1.2.8"
-  update_at: "2026-11-02"
+  version: "1.2.9"
+  update_at: "2026-11-08"
   release_notes:
     en_US: |-
       Added:
-      - Added new msgpack websocket transmission mode for more efficient binary communication
-      - Added support for customizing console/editor font size via keyboard shortcuts
-      - Added admin controls for mass-retrying failed-deletion backups
-      - Added explicit oauth API linkability option to oauth providers
-      - Added children counts to many admin tables
-      - Added support for weekly cronjobs in schedules
-      - Added ability to hide oauth providers from login
+      - Added resource usage history tracking
+      - Added queuing system for wings permission pushes
+      - Added new backup configuration runs system to fix some issues and add more control
+      - Added support for more in-depth trash browsing
+      - Added support for matching resource usages in schedules against percentages
+      - Added infinite scroll to most searchable selects
 
       Fixed:
-      - Fixed some bugs in the file manager tree view pane system
-      - FIxed MacOS issues related to xterm copying
-      - Fixed Announcements being able to murder mobile UX
-      …
-      Full notes: https://github.com/calagopus/panel/releases/tag/release-1.2.8
+      - Fixed some open performance issues on the settings lock
+      - Fixed initial location being broken in file manager image preview
+      - Fixed xterm block char rendering issue
+      - Fixed searchable selects not showing loading indicators in preview card
   index: /
   scheme: http
   port_map: "8000"
